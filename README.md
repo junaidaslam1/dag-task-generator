@@ -14,4 +14,5 @@ use the following command to get help in the terminal:
 
 python3 -W ignore generate_typed_hetero_workload.py -h
 
+The option to check the feasibility of a task-set is not yet generic. Soon, it will be made generic by providing an option to spicy complete command string to execute for checking the feasibility of each of the generated task-sets.
 More information about the task set settings file format and help catalogue will be posted soon...
