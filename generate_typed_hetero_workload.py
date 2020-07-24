@@ -2,9 +2,7 @@
 *********************** Fork Join DAG Generator (DG) ************************
 * Author:           Muhammad Junaid Aslam                                   *
 * Private Email:    junaidaslam1@gmail.com                                  *
-* Work Email:       m.j.aslam@tudelft.nl                                    *
-* Rank:             PhD Candidate                                           *
-* Institute:        Technical University of Delft, Netherlands              *
+* Work Email:       mjaslam@kth.se                                    		*
 *                                                                           *
 * This software is a computer program whose purpose is to help the          *
 * random generation of directed acyclic graph structures and adding         *
