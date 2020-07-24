@@ -24,7 +24,7 @@ A simple command to pick up the bunch of job set files and run them on the compu
 
 `python3 ExecuteTests.py -p ../../np-schedulability-analysis/ -w <path_to_job_set_files> -s /home/<user>/<directory>/ -cl PC -r Y`
 
-To run the tests on the chosen cluster use `-cl <cluster option>`, for rest of the options refer to the help command.
+To run the tests on the chosen cluster use `-cl <cluster option>` and do not use `-r Y` option, for rest of the options related to specifying job parameters of a cluster refer to the help command.
 
 This tool automatically generates `JobResult..` files per job set file to store its outcome in a Results directory. 
 
