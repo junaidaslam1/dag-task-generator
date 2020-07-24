@@ -1,3 +1,5 @@
+*All of the scripts are self explanatory in their syntax. The comments on the crucial points are inserted.*
+
 # DAG Generator Tool (generate_typed_hetero_workload.py)
 
 This software is a collection of computer programs whose purpose is to help the random generation of directed acyclic graph (DAG) structures while adding
