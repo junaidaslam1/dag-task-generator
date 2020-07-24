@@ -2,9 +2,6 @@
 ******************************* Task Set Data Verification **********************
 * Author:       Muhammad Junaid Aslam
 * Contact:      junaidaslam1@gmail.com
-* Rank:         PhD Candidate
-* Institute:    Technical University of Delft, Netherlands
-*
 * ---------------------------------------------------------------------
 * This software is governed by the Null license under M.J law and     |
 * abiding by the rules of distribution of free software. You can use, |
@@ -12,7 +9,7 @@
 * or crediting the authors of this software in your work.             |
 * ---------------------------------------------------------------------
 *
-* This is part of a research project funded by the EWI EEMCS Group of
+* This was part of a research project funded by the EWI EEMCS Group of
 * Technical University of Delft, Netherlands.
 **********************************************************************************
 '''

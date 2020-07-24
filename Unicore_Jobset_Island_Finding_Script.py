@@ -1,3 +1,18 @@
+'''
+****************** Finding Islands of Jobs for Uni-Core Analysis ****************
+* Author:       Muhammad Junaid Aslam
+* Contact:      junaidaslam1@gmail.com
+* ---------------------------------------------------------------------
+* This software is governed by the Null license under M.J law and     |
+* abiding by the rules of distribution of free software. You can use, |
+* modify and redistribute the software under the condition of citing  |
+* or crediting the authors of this software in your work.             |
+* ---------------------------------------------------------------------
+*
+* This was part of a research project funded by the EWI EEMCS Group of
+* Technical University of Delft, Netherlands.
+**********************************************************************************
+'''
 import csv
 import sys
 import os

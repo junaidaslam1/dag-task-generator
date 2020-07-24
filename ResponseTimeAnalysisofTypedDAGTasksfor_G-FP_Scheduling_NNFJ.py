@@ -1,9 +1,8 @@
 '''
 ********** Response Time Analysis of Typed DAG Tasks for G-FP Scheduling *********
+****************** Implementation of Peng'19 and Han'19 Papers *******************
 * Author:       Muhammad Junaid Aslam
 * Contact:      junaidaslam1@gmail.com
-* Rank:         PhD Candidate
-* Institute:    Technical University of Delft, Netherlands
 *
 * This software is a computer program whose purpose is to evaluate the
 * performance of the titled method for schedulability analysis.
