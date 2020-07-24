@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument('-p', '--test_location', dest='nptest_path', default='/home/nfs/jaslam/np_schedulability_disc_new_eq/', 
                         action='store', type=str, metavar="TEST_BINARY_LOCATION",
                         required=True,
-                        help='The place to pickup test executable (e.g. nptest)')
+                        help='The place to pickup test executable (e.g. nptest); in this case only provide the parent folder path of the tool. e.g.: -p ~/np-schedulability-analysis/')
 
     parser.add_argument('-w', '--workload_location', dest='root_folder', default='$HOME', 
                         action='store', type=str, metavar="WORKLOAD_LOCATION",
@@ -51,7 +51,7 @@ def parse_args():
     parser.add_argument('-cl', '--cluster', dest='cluster', default='insy', 
 			            action='store', type=str,
 			            required=True,
-			            help='The Cluster; Choices = {insy, das5, surfsara}')
+			            help='The Cluster; Choices = {insy, das5, surfsara, PC}')
 
     parser.add_argument('-l', '--timeout_test', dest='timeout_test', default='0', 
 	                    action='store', type=str, metavar="TIMEOUT",

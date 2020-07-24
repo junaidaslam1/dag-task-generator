@@ -747,6 +747,7 @@ def UpdateParIndexOfEachIndex(IndexSet, TaskSetInfo):
 		idx.Par_idx.sort(key=lambda v:v.index)
 
 def UpdateIndexPredecessors(index, TaskSetInfo):
+	# An index means a job
 	for Task in TaskSetInfo:
 		if index.TID == Task.TID:
 			Pu = (math.ceil(index.Deadline / index.Period) - 1)
@@ -758,6 +759,8 @@ def UpdateIndexPredecessors(index, TaskSetInfo):
 	index.Pred_idx.sort(key=lambda v:v.index)
 
 def ExtractJobsetFileData(JobsetFile, TaskSetInfo):
+	# Each of the jobs in the job-set file is specified by an Index
+
 	#Row = TID, JID, r_min, r_max, BCET, WCET, Deadline, Priority, ResourceType
 
 	IndexSet = []
@@ -826,6 +829,7 @@ def Execute_Test(TasksetFile, JobsetFile, PredFile):
 
 	# Extracting Task set Details
 	TaskSetInfo, Results.Jobs = ExtractTaskSetData(TasksetFile)
+	# Extracting the job set file data
 	IndexSet = ExtractJobsetFileData(JobsetFile, TaskSetInfo)
 
 	# Printing Task set System Configurations
@@ -845,15 +849,19 @@ def ReadFiles(directory):
 
 			if ("Results" in dirName or "Results" in directory) and ("SOA" not in dirName) and ("Visuals" not in dirName):
 				ResultsFile = dirName+"/"+fileList[0]
+				# This function extracts the rows of Results.csv file to extract job set file names and their respective deadline miss path
 				ExtractAllResultRows(ResultsFile)
 				
 				for row in range(0, len(Current_Deadline_Miss_Data)):
 					if len(Current_Deadline_Miss_Data[row]) > 0:
 						Current_Deadline_Miss_Path	=	Current_Deadline_Miss_Data[row]
 						JobFile  = Current_Results_File_Data[row][0]
+						# Extract predecessor file of the extracted job set file
 						PredFile = getPredecessorName(JobFile)
+						# Extract the Task file path from job set file
 						TaskFile = getTaskFilePath(JobFile)
 						print("Current_Deadline_Miss_Path:",Current_Deadline_Miss_Path)
+						# For each of these files execute test
 						results = Execute_Test(TaskFile, JobFile, PredFile)
 
 def main():

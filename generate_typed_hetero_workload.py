@@ -24,7 +24,6 @@
 * install the "graphviz" package, otherwise it will throw error about 'dot' *
 * command.                                                                  *
 *****************************************************************************
-#TODO: Fix EdgeExists_in_Paths Function, which is Called with "-n R" CLI option
 '''
 #!/usr/bin/env python3
 import argparse
@@ -44,6 +43,7 @@ import random
 from fractions import gcd
 from functools import reduce
 
+# MACRO definitions for the visualization tool
 RSC0_COLOR = "blue"
 RSC1_COLOR = "black"
 RSC2_COLOR = "green"
@@ -148,6 +148,7 @@ EXEC_TIME_VARIATION = 0
 MAX_JOBS_PER_HYPER_PERIOD = 0
 RSC_ASSIGNMENT_BY_PROBABILITY = False
 
+# The class whose objects hold per node data
 class NodeInfo:
 	
 	def __init__(self): 
@@ -171,6 +172,7 @@ class NodeInfo:
 		print("T%dJ%d BCET:%d WCET:%d RSC:%d Deadline:%d"%\
 			(self.TID, self.JID, self.BCET, self.WCET, self.ResourceType, self.Deadline))
 
+# The class whose objects hold per task data
 class TaskData:
 	def __init__(self): 
 		self.TID      = 0
@@ -179,6 +181,7 @@ class TaskData:
 		self.Deadline = 0
 		self.Priority = 0
 
+# The class spawns threads to generate tasks in parallel; where each thread works for a specific utilization point
 class myThread(threading.Thread):
 	def __init__(self, path, Utilization, FA):
 		threading.Thread.__init__(self)
@@ -190,6 +193,7 @@ class myThread(threading.Thread):
 		CreateWorkloadRuns(self.path, self.Utilization, self.FA)
 		print("Exiting " + self.path)
 
+# The function returns the desired color w.r.t input number to be used in visuals
 def getColor(RSC_TYPE):
 	if RSC_TYPE == 0:
 		return RSC0_COLOR
@@ -218,18 +222,21 @@ def getColor(RSC_TYPE):
 	elif RSC_TYPE == LONGEST_WCET_PATH_COLOR:
 		return CRP_W_COLOR
 
+# This function runs the shell commands and returns their output
 def run_command(incommand):
 	p = subprocess.Popen(incommand.split(), stdout=subprocess.PIPE,
 stderr=subprocess.STDOUT)
 	outstring = p.stdout.read()
 	return outstring
 
+# below given functions are self explanatory as their use numpy framework to generate random numbers
 def getRandomSample(min, max):
 	return np.random.random_sample(min, max)
 
 def getRandomInteger(min, max):
 	return np.random.random_integers(min, max)
 
+# This function returns the number of parallel branches to be forked from a node during the task set generation
 def getSiblingsCount(NodesCreated = 2):
 	values = []
 	p_values = []
@@ -239,6 +246,11 @@ def getSiblingsCount(NodesCreated = 2):
 	elif (MAX_NODES - NodesCreated) < MAX_PAR_BRANCHES:
 		return (MAX_NODES - NodesCreated)
 
+	'''
+	This if block assigns probabilities to the random selection of number of siblings count so as to assign highest
+	probability to the maximum possible parallel sub-branches subsequently assigning lower probabilities to lesser 
+	number of possible branches. 
+	'''
 	if WANT_MORE_SIBLINGS == True:
 		for n in reversed(range(MAX_PAR_BRANCHES)):
 			values.append(n+1)
@@ -254,14 +266,17 @@ def getSiblingsCount(NodesCreated = 2):
 
 	return np.random.choice(values, p = p_values)
 
+# This function returns a number uniformly between min and max number
 def getUniform(min, max):
 	return np.random.uniform(min, max)
 
+# This returns the possibility of a node to be either Terminal or fork based on settings specified in TasksetSettings.csv file
 def isTerminalNodeOrParallelSubGraph():
 	values = [IS_TERMINAL, IS_PARALLEL, IS_JOIN]
 	p_values = [PROB_TERMINAL, PROB_PARALLEL, 1 - PROB_TERMINAL - PROB_PARALLEL]
 	return np.random.choice(values, p = p_values)
 
+# In the case of heterogeneous task set generation, this gets the resource type of nodes by probability
 def getResourcebyProbability():
 	values = []
 	p_values = []
@@ -273,27 +288,32 @@ def getResourcebyProbability():
 
 	return np.random.choice(values, p = p_values)
 
+# This function checks either a node is terminal or joining; Not used at this moment
 def isTerminalNode():
 	values = [IS_TERMINAL, IS_JOIN]
 	p_values = [PROB_TERMINAL, 1 - PROB_TERMINAL]
 	return np.random.choice(values, p = p_values)
 
+# This function checks either a node is a fork or joining; Not used at this moment
 def isJoinOrParallelSubGraph():
 	values = [IS_PARALLEL, IS_JOIN]
 	p_values = [PROB_PARALLEL, 1 - PROB_TERMINAL - PROB_PARALLEL]
 	return np.random.choice(values, p = p_values)
 
+# This function checks whether an edge between two siblings should be created or not based on probability specified in TasksetSettings.csv
 def ShouldAddEdge():
 	values = [True, False]
 	p_values = [PROB_ADD_EDGE, 1 - PROB_ADD_EDGE]
 	return np.random.choice(values, p = p_values)
 
+# This gets the resource assignment randomly when generating heterogeneous task sets
 def getRandomResourceAssignment(SelfSuspending = False):
 	if SelfSuspending == True:
 		return getRandomInteger(0, RESOURCE_TYPES)
 	else:
 		return getRandomInteger(1, RESOURCE_TYPES)
 
+# This function is a high level call to getResourcebyProbability()
 def getResourceAssignmentbyProbability(SelfSuspending = False):
 	'''
 	The probability of each resource is calculated as:
@@ -301,11 +321,12 @@ def getResourceAssignmentbyProbability(SelfSuspending = False):
 		Probability = CoresOfRSC_i / TotalCoresOfAllRSC
 	'''
 	if SelfSuspending == True:
-		# fix this with probability
+		# TODO: Fix this with probability
 		return getRandomInteger(0, RESOURCE_TYPES)
 	else:
 		return getResourcebyProbability()
 
+# This function generated utilizations using randfixsum method. Not used at this moment
 def RandFixSum(Utilizations_Per_Task, List_of_Nodes_Per_Task):
 	nums = []
 	for i in totals:
@@ -347,6 +368,7 @@ def Print_Pred_Succ_Par_Ancs_Desc(VertexID, List, Attribute="Predecessors", PRIN
 
 	return printList
 
+# This function is used to extract log uniform period following Rob Davis Alan Burns method.
 def getLogUniformPeriod():
 	s = math.log(MIN_PERIOD)
 	e = math.log(MAX_PERIOD + MIN_PERIOD)
@@ -430,6 +452,7 @@ def PrintExtractedParameters():
 
 	print("--------------------------------------------")
 
+# This function checks if inPeriod is already existing in Periods list or not.
 def isPeriodDuplicate(Periods, inPeriod=0):
 	if inPeriod == 0:
 		for Period in range(0, len(Periods)):
@@ -448,6 +471,7 @@ def isPeriodDuplicate(Periods, inPeriod=0):
 			return True
 	return False
 
+# Extracting parameters of TasksetSettings.csv file here
 def ExtractParameters(Settings):
 	global NR_OF_RUNS
 	global MIN_N
@@ -571,6 +595,7 @@ def ExtractParameters(Settings):
 		TOTAL_COMPUTING_NODES   =   TotalComputingNodes
 		# TOTAL_UTILIZATION =  float(TotalComputingNodes * MaxUtilizationPercentage)
 
+# Get the utilization, or any other set of quantities using UUnifast method
 def UUniFast(Number_of_Items, Quantity):
 	# Classic UUniFast algorithm:
 	Separated_Quantities = []
@@ -586,6 +611,7 @@ def UUniFast(Number_of_Items, Quantity):
 
 	return Separated_Quantities
 
+# This returns Volum of a Task
 def getTotalTaskWCET(Nodes):
 	WCET_SUM = 0
 	
@@ -594,6 +620,7 @@ def getTotalTaskWCET(Nodes):
 
 	return WCET_SUM
 
+# This returns Task Period using the formula Volume / Utilization
 def getTaskPeriod(utilization, Nodes):
 	
 	WCET_SUM = 0
@@ -605,6 +632,7 @@ def getTaskPeriod(utilization, Nodes):
 
 	return Period
 
+# This checks if the given list of Periods are co-prime or not
 def checkCoPrime(Periods):
 	if len(Periods) > 2:
 		x = reduce(gcd, Periods)
@@ -616,6 +644,7 @@ def csvWriteRow(Writer, List):
 	Writer.writerow(List)
 	List.clear()
 
+# This function uses the tool dag-tasks-to-jobs_hetero.py to create job set files from task set files.
 def create_job_set(FileName): 
 	lvFileName = FileName.split('.')
 	
@@ -629,12 +658,19 @@ def create_job_set(FileName):
 
 	res = run_command(lvCMD)
 
+	# If '-j z' option is specified at command line then below lines are not executed to remove the task set file
 	if WANT_TASKJOB_SET == False:
 		lvCMD = "rm -rf "+FileName
 		res = run_command(lvCMD)
 
 	return lvJobFileName, lvPredFileName
 
+'''
+This function simply creates the task set files
+TODO: Assignment of Task IDs as per their sorting w.r.t to their periods
+At this moment, The task IDs which were assigned initially are retained; 
+it should be reassigned based on sorted tasks in the final file.
+'''
 def create_tasks_file(TaskCount, TaskSetList, FileName, Periods, Priorities):
 	TaskSetFileData = []
 
@@ -711,10 +747,12 @@ def create_tasks_file(TaskCount, TaskSetList, FileName, Periods, Priorities):
 						TaskSetFileData.append(TaskSetData[Task].Nodes[Node].Pred[p]+1)
 
 					csvWriteRow(TaskWriter, TaskSetFileData)                         
-					
+
+# This returns Hyper Period of the generated Task Set			
 def get_hyper_period(numbers):
 	return reduce(lambda x, y: (x*y)/gcd(x,y), numbers, 1)     
 
+# This returns the list of Resource types assigned in a task. 
 def getUsedRSCTypes(Nodes):
 	UsedRSCTypes = []
 	
@@ -730,6 +768,8 @@ def getUsedRSCTypes(Nodes):
 			Type_Used = 0
 
 	return UsedRSCTypes
+
+# This returns the number of nodes of a specific resource type in a task. 
 def getNodesCountOfRSCType(Nodes):
 	Nodes_Per_RSC_Type = []
 	
@@ -786,6 +826,7 @@ def UpdateTaskExecutionTimes(TaskNodes, Utilization, Period):
 		if vertex.BCET > vertex.WCET:
 			vertex.BCET = vertex.WCET
 
+# Updating the release times of jobs if it is required to assign release jitter
 def UpdateReleaseTimes(Nodes):
 	for vertex in range(1, len(Nodes)):
 		MAX_of_r_min_plus_BCET = 0
@@ -994,6 +1035,7 @@ def checkNecessaryCondition(TaskSetList, Utilizations, inputUtilization, Periods
 
 	return True, TotalJobsPerHyperPeriod
 
+# This function parses all the command line arguments
 def parse_args():
 
 	parser = argparse.ArgumentParser(description="Create task sets file")
@@ -1167,6 +1209,7 @@ def newNode(TaskNr, NodeNr, Pred, ExcludePredResource = False):
 
 	return Node
 
+# this function adds the legend to the visuals
 def addLegendtoGraph(fp, CriticalPaths_WCET):
 
 	if CriticalPaths_WCET > 0:
@@ -1206,6 +1249,7 @@ def addLegendtoGraph(fp, CriticalPaths_WCET):
 
 	fp.write("}\n")
 
+# this function creates the visuals of a task
 def createTaskGraphFile(Nodes, TaskNr, CriticalPaths, CriticalPaths_WCET, FileName):
 	# Creating Nodes File
 
@@ -1279,6 +1323,7 @@ def createTaskGraphFile(Nodes, TaskNr, CriticalPaths, CriticalPaths_WCET, FileNa
 	lvCMD = "rm "+lvstr
 	res = run_command(lvCMD)
 
+# this function is not used.
 def getSelectedChildNodes(ChildSiblings, Nodes):
 	SelectedNodes = []
 	if len(ChildSiblings) > 0:
@@ -1295,6 +1340,7 @@ def getSelectedChildNodes(ChildSiblings, Nodes):
 
 	return SelectedNodes
 
+# this function retreived all the paths of a Task
 def getAllPaths(Nodes, InputNode, outAllPaths, AllPaths):
 	AllPaths.append(InputNode)
 	if len(InputNode.Succ) > 0:
@@ -1321,6 +1367,7 @@ def getAllPaths(Nodes, InputNode, outAllPaths, AllPaths):
 		# else:
 		#     print("Path is incomplete")
 
+# this function returns the critical paths. Note: There can be more than 1 critical paths in a task graph
 def getCriticalPaths_wrt_WCET(inAllPaths):
 	WCET = 0
 	CriticalPaths = []
@@ -1351,7 +1398,7 @@ def getCriticalPaths_wrt_WCET(inAllPaths):
 
 	return CriticalPaths, WCET
 
-			  
+# This is a high level call to getting Critical paths of a task
 def getCriticalPathInfo(TaskNodes):
 	outAllPaths = []
 	AllPaths = []
@@ -1362,6 +1409,7 @@ def getCriticalPathInfo(TaskNodes):
 
 	return CriticalPaths, CriticalPaths_WCET
 
+# This returns all paths with respect to max number of jobs
 def getAllLongestJobPathsWithBranches(Nodes, TerminalNode, Length, inPutNodes):
 	LongestPathNodes = []
 	lvLongestNodes = []
@@ -1391,6 +1439,7 @@ def getAllLongestJobPathsWithBranches(Nodes, TerminalNode, Length, inPutNodes):
 		DummyNodes = []
 		return DummyNodes
 
+# This function collects all paths of a task to find critical path w.r.t max number jobs
 def getLongestJobPaths(Nodes, TerminalNode):
 	ListsOfLongestPaths = []
 	nNodes = []
@@ -1466,6 +1515,7 @@ def getLongestJobPaths(Nodes, TerminalNode):
 
 	return ListsOfLongestPaths
 
+# this returns critical paths with respec to the number of jobs instead of execution time
 def getCriticalPaths_wrt_Jobs(AllLongestPaths):
 
 	MAX_WCET_CRITICAL_PATH = 0
@@ -1494,6 +1544,7 @@ def getCriticalPaths_wrt_Jobs(AllLongestPaths):
 
 	return CriticalPaths, MAX_WCET_CRITICAL_PATH
 
+# This function updates the lengths of the paths recursively whenever there is a random edge between siblings
 def updateLengths(Nodes, NodeID, Successors, Length):
 	size_l = len(Successors)
 	if size_l > 1:
@@ -1508,6 +1559,7 @@ def updateLengths(Nodes, NodeID, Successors, Length):
 			if (Length + 1) >= Nodes[Successors[0]].Length:
 				Nodes[Successors[0]].Length = Length + 1
 
+# this function creates simple fork-join DAGs (or) simple non-nested fork-join dag tasks
 def expandSeriesParallelNNFJDAG(NodeCounter, Nodes, TaskNr, RootNode, TermNode, Depth, TaskNodesCreated = 2):
 	lvNodeCounter = NodeCounter
 	NodesCreated = TaskNodesCreated
@@ -1612,6 +1664,7 @@ def expandSeriesParallelNNFJDAG(NodeCounter, Nodes, TaskNr, RootNode, TermNode, 
 
 	return lvNodeCounter
 
+# this function creates nested fork-join dag tasks
 def expandSeriesParallelNestedFJDAG(NodeCounter, Nodes, TaskNr, RootNode, JoiningNode, TermNode, Depth, TaskNodesCreated = 2):
 	lvNodeCounter = NodeCounter
 	NodesCreated = TaskNodesCreated
@@ -1854,6 +1907,10 @@ def UpdateAncestors_of_EachVertex(TaskInfo, AllPaths):
 		CommonPaths.clear()
 		TaskInfo[vertex].Ancs.sort(key=lambda v:v.JID)
 
+'''
+This function generates the utilizations of DAG tasks w.r.t UUnifast Discard. Here the threshold of utilization is set with
+some tolerance specified in fixed settings at the top of this script.
+'''
 def getUtilizationUUnifastDiscard(Tasks, Utilization):
 	UtilizationCondition = False
 	UtilizationPerTaskList = []
@@ -1890,6 +1947,7 @@ def getUtilizationUUnifastDiscard(Tasks, Utilization):
 def getUtilizationUUnifast(Tasks, Utilization):
 	return UUniFast(Tasks, Utilization)
 
+# This is a high level call to create visuals of a task
 def CreateGraphFile(TaskNr, TaskInfo, outAllPaths, FileName):
 	AllLongestPaths =[]
 	CriticalPaths =[]
@@ -1909,6 +1967,7 @@ def CreateGraphFile(TaskNr, TaskInfo, outAllPaths, FileName):
 
 	return CriticalPaths
 
+# This function checks if there exists an edge in a path.
 def EdgeExists_in_Paths(CriticalPaths, Pred, JobID):
 	for m in range(0, len(CriticalPaths)):
 		for n in range(0, len(CriticalPaths[m])):
@@ -1919,6 +1978,10 @@ def EdgeExists_in_Paths(CriticalPaths, Pred, JobID):
 					return True        
 	return False
 
+'''
+This removes the conflicting edge found during the process of converting 
+a Task graph into a pure nested-fork-join with no random edges
+'''
 def RemoveConflictingEdge(VTX, Pred, TaskNodes):
 	try:
 		Pred.Succ.remove(VTX.JID)
@@ -1931,6 +1994,9 @@ def RemoveConflictingEdge(VTX, Pred, TaskNodes):
 	getAllPaths(TaskNodes, TaskNodes[0], outAllPaths, AllPaths)
 	UpdateAncestors_of_EachVertex(TaskNodes, outAllPaths)
 
+'''
+This converts a task with random edges into a task with no random edges.
+'''
 def Convert_to_NFJ_DAG(cNodes, CriticalPaths):
 	for vertex in range(0, len(cNodes)):
 		
@@ -2036,6 +2102,11 @@ def rename_task_jobset(JobSetFileName, PredFileName, NF_subPath, FileName=""):
 		lvCMD = "mv "+lvPred[0]+"_NOT_FEASIBLE.csv "+NF_subPath+"/"
 		res = run_command(lvCMD)
 
+'''
+This tests the feasibility of the generated job set. At this moment, it is not generic. This is only for 
+np-schedulability-analysis tool which is available in another repository. If it needs to be extended, then 
+it is better to extend the tool.
+'''
 def test_feasibility(Type="Heterogeneous", Workload="", threads=1):
 	if threads > 1:
 		if (Type == "Heterogeneous") or (Type == "Heterogeneous_Save") or (Type == "Heterogeneous_Save_Isolate") or (Type == "Heterogeneous_Create_Feasible"):
@@ -2060,6 +2131,7 @@ def ConvertTaskSet_for_Feasibility_Analysis(FA_TaskSetList):
 		for Vertex in range(0, len(FA_TaskSetList[Task])):
 			FA_TaskSetList[Task][Vertex].BCET = FA_TaskSetList[Task][Vertex].WCET
 
+# This retreives the task set priorities
 def getTaskSetPriorities(Periods):
 	Priorities = []
 	Counter = 0
@@ -2076,6 +2148,8 @@ def getTaskSetPriorities(Periods):
 
 	return Priorities
 
+# This is a high level call to remove all redundant edges to create a pure fork-join task
+# If it is not desired, simple use the command line option '-n F'
 def getNFJCovertedNodes(TaskSetList, cNodeList=[]):
 	for n in range(0, len(TaskSetList)):
 		outAllPaths = []
@@ -2087,6 +2161,7 @@ def getNFJCovertedNodes(TaskSetList, cNodeList=[]):
 		Convert_to_NFJ_DAG(cNodes, CriticalPaths)
 		cNodeList.append(cNodes)
 
+# This function creates a task set.
 def createWorkload(Run, Tasks, FileName, Utilization, subPath, GraphFileName):
 	global MAX_PERIOD_GENERATED
 
@@ -2310,6 +2385,7 @@ def createWorkload(Run, Tasks, FileName, Utilization, subPath, GraphFileName):
 
 	return FEASIBLE
 
+# This creates a set of task set and job set files
 def CreateWorkloadRuns(path, Utilization, FA="NA"):
 	fp = 0
 
@@ -2432,6 +2508,7 @@ def CreateWorkloadRuns(path, Utilization, FA="NA"):
 	if fp != 0:
 		fp.close()
 
+# Main of the script
 def main():
 
 	global DEBUG
