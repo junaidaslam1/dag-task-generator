@@ -36,7 +36,9 @@ This script automatically gathers data from all of the `JobResult...` files and 
 
 Above command gets the location and summarizes all of the results. `-P 90` in the command calculates the 90 percentile CPU Time and Mem usage of job sets per configuration (e.g, XX % utilization and YY number of tasks in a task-set for ZZZ number of samples). The `-d 1` divides the CPU Time by `1` to give CPU-Time with respect to a single CPU analysis time. This can be used to divide the CPU-Time by the number of threads (`-d 16`) to get a rough estimation of wall-clock time.
 
-*Verification Scripts*
+*Note: This script will work only if the ExecuteTests.py is used to run and gather test results*
+
+# *Verification Scripts*
 
 Below 3 scripts can be used with simple python commands like `python3 VerifyTaskSetData.py -h` The `-h` option provides options and details to use them.
 
