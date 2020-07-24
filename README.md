@@ -74,5 +74,5 @@ for Peng'19 (which is for multiple DAG tasks) analysis simple remove the `-s` fr
 
 This script was developed as a proof of concept to identify islands of job sets to be analyzed, so that if in a hyper period a set of jobs has already been analyzed with certain constraints then it should not be analyzed again so as to elude the early state space exploration. 
 
-For further information, you can contact the author at *junaidaslam1@gmail.com*
+For further information, you can contact the author at *junaidaslam1@gmail.com* or *mjaslam@kth.se*
 
