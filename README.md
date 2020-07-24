@@ -44,7 +44,7 @@ Below 3 scripts can be used with simple python commands like `python3 VerifyTask
 
 # DeadlineMissVerification 
 
-This script was developed to verify deadline miss verification scenarios. The tool was heavily pessimistic hence it could not be performed. If the pessimism from the tool is removed then this tool can be further developed to implement the algorithm. For now, it is incomplete; however, it can extract the jobs out of a job-set and also various propoerties and dependencies of it. For example, its parallel jobs and ancestors, successors, predecessors etc etc...
+This script was developed to verify deadline miss verification scenarios. The tool was heavily pessimistic hence it could not be performed. If the pessimism from the tool is removed then this tool can be further developed to implement the algorithm. For now, it is incomplete; however, it can extract the jobs out of a job-set and also various propoerties and dependencies of it. For example, its parallel jobs and ancestors, successors, predecessors etc etc... This script only works with the `Results.csv` file filled by *GatherResults.py* script.
 
 # VerifyTaskSetData
 
