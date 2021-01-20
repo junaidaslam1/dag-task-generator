@@ -2,20 +2,19 @@
 *********************** Fork Join DAG Generator (DG) ************************
 * Author:           Muhammad Junaid Aslam                                   *
 * Private Email:    junaidaslam1@gmail.com                                  *
-* Work Email:       mjaslam@kth.se                                    		*
+* Work Email:       mjaslam@kth.se                                    	    *
 *                                                                           *
 * This software is a computer program whose purpose is to help the          *
 * random generation of directed acyclic graph structures and adding         *
 * various properties on those structures.                                   *
 *                                                                           *
-* ---------------------------------------------------------------------     *
-* This software is governed by the Null license under M.J law and     |     *
-* abiding by the rules of distribution of free software. You can use, |     *
-* modify and redistribute the software under the condition of citing  |     *
-* or crediting the authors of this software in your work.             |     *
-* ---------------------------------------------------------------------     *
+* --------------------------------------------------------------------------*
+* This software is governed by the No license. You can use, modify          *
+* and redistribute the software under the condition of citing  	            *
+* or crediting the authors of this software in your work.                   *
+* --------------------------------------------------------------------------*
 *                                                                           *
-* FJDG is a random graph generator:                                         *
+* DG is a random graph generator:                                           *
 * it provides means to generate a directed acyclic graph following a        *
 * method of the nested fork join. This is part of a research project funded *
 * by the EWI EEMCS Group of Technical University of Delft, Netherlands.     *
